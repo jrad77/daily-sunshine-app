@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/daily-sunshine-app/static/css/main.e6c13ad2.css",
+    "main.js": "/daily-sunshine-app/static/js/main.b1b5caba.js",
+    "static/js/453.9431fad5.chunk.js": "/daily-sunshine-app/static/js/453.9431fad5.chunk.js",
+    "index.html": "/daily-sunshine-app/index.html",
+    "main.e6c13ad2.css.map": "/daily-sunshine-app/static/css/main.e6c13ad2.css.map",
+    "main.b1b5caba.js.map": "/daily-sunshine-app/static/js/main.b1b5caba.js.map",
+    "453.9431fad5.chunk.js.map": "/daily-sunshine-app/static/js/453.9431fad5.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.b1b5caba.js"
+  ]
+}
