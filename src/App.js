@@ -12,7 +12,6 @@ const LifeChecklist = () => {
   ];
 
   const [items, setItems] = useState(defaultItems);
-  const [history, setHistory] = useState([]);
   const [storageType, setStorageType] = useState('Checking...');
   const [lastSaved, setLastSaved] = useState(null);
 
@@ -24,14 +23,13 @@ const LifeChecklist = () => {
     if (storageType === 'localStorage') {
       try {
         localStorage.setItem('checklistItems', JSON.stringify(items));
-        localStorage.setItem('checklistHistory', JSON.stringify(history));
         setLastSaved(new Date().toLocaleTimeString());
       } catch (error) {
         console.error('Failed to save to localStorage:', error);
         setStorageType('memory');
       }
     }
-  }, [items, history, storageType]);
+  }, [items, storageType]);
 
   const checkAndSetStorage = () => {
     try {
@@ -39,23 +37,11 @@ const LifeChecklist = () => {
       localStorage.removeItem('test');
       setStorageType('localStorage');
       const savedItems = localStorage.getItem('checklistItems');
-      const savedHistory = localStorage.getItem('checklistHistory');
       if (savedItems) setItems(JSON.parse(savedItems));
-      if (savedHistory) setHistory(JSON.parse(savedHistory));
-      else initializeHistory();
     } catch (error) {
       console.error('localStorage not available:', error);
       setStorageType('memory');
-      initializeHistory();
     }
-  };
-
-  const initializeHistory = () => {
-    const newHistory = Array(7).fill().map((_, index) => ({
-      date: new Date(Date.now() - index * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      completed: 0
-    }));
-    setHistory(newHistory);
   };
 
   const toggleItem = (id) => {
@@ -63,16 +49,6 @@ const LifeChecklist = () => {
       item.id === id ? { ...item, completed: !item.completed } : item
     );
     setItems(newItems);
-    updateTodayHistory(newItems);
-  };
-
-  const updateTodayHistory = (currentItems) => {
-    const today = new Date().toISOString().split('T')[0];
-    const completedCount = currentItems.filter(item => item.completed).length;
-    const newHistory = history.map(day => 
-      day.date === today ? { ...day, completed: completedCount } : day
-    );
-    setHistory(newHistory);
   };
 
   const addItem = (text) => {
@@ -112,7 +88,6 @@ const LifeChecklist = () => {
         textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
       }}>My Daily Sunshine</h1>
       <p style={{ textAlign: 'center', color: '#4a5568', marginBottom: '20px' }}>{today}</p>
-      <HistoryTracker history={history} totalItems={items.length} />
       <p style={{ textAlign: 'center', color: '#718096', marginBottom: '20px' }}>
         Storage: {storageType}
         {storageType === 'localStorage' && lastSaved && ` (Last saved: ${lastSaved})`}
@@ -154,31 +129,6 @@ const LifeChecklist = () => {
       <NewItemForm onAdd={addItem} />
     </div>
   );
-};
-
-const HistoryTracker = ({ history, totalItems }) => {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-      {history.slice().reverse().map((day, index) => (
-        <div key={day.date} style={{ textAlign: 'center' }}>
-          <div style={{
-            width: '30px',
-            height: '30px',
-            borderRadius: '50%',
-            background: `linear-gradient(to top, #4299e1 ${(day.completed / totalItems) * 100}%, #edf2f7 ${(day.completed / totalItems) * 100}%)`,
-            margin: '0 auto 5px',
-            border: '2px solid #cbd5e0'
-          }} />
-          <div style={{ fontSize: '12px' }}>{index === 0 ? 'Today' : formatDate(day.date)}</div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { weekday: 'short' });
 };
 
 const NewItemForm = ({ onAdd }) => {
